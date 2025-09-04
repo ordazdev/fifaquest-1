@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FanQuest 2026 - FIFA World Cup Fan Meetups</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 414px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: white;
+            position: relative;
+        }
+
+        .screen {
+            display: none;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 60px;
+            margin-bottom: 16px;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .btn {
+            background: #007AFF;
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin: 8px 0;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .btn.secondary {
+            background: #f1f1f1;
+            color: #333;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 32px 0;
+        }
+
+        .team-card {
+            padding: 24px 16px;
+            text-align: center;
+            border: 2px solid transparent;
+            border-radius: 16px;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .team-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .team-card.selected {
+            border-color: #007AFF;
+            background: rgba(0, 122, 255, 0.05);
+        }
+
+        .team-flag {
+            font-size: 48px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .team-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .team-country {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .fixture-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 16px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .fixture-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+        }
+
+        .match-teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .team-info {
+            text-align: center;
+            flex: 1;
+        }
+
+        .team-info .flag {
+            font-size: 32px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .team-info .name {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .vs-section {
+            flex: 0 0 auto;
+            text-align: center;
+            margin: 0 20px;
+        }
+
+        .vs-text {
+            font-size: 12px;
+            color: #666;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .match-time {
+            font-size: 10px;
+            color: #666;
+        }
+
+        .venue-info {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .stadium {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .city {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .attendance-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .attendance-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .going-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid #007AFF;
+            background: transparent;
+            color: #007AFF;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .going-btn.active {
+            background: #007AFF;
+            color: white;
+        }
+
+        .event-tabs {
+            display: flex;
+            gap: 12px;
+            margin: 24px 0;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .event-tab {
+            padding: 10px 16px;
+            border-radius: 20px;
+            background: #f1f1f1;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .event-tab.active {
+            background: #007AFF;
+            color: white;
+        }
+
+        .event-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0;
+            border: 1px solid #e1e1e1;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .event-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .event-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .event-host {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .event-price {
+            text-align: right;
+        }
+
+        .price {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .free {
+            color: #34C759;
+        }
+
+        .verified {
+            color: #007AFF;
+            font-size: 16px;
+        }
+
+        .event-description {
+            font-size: 14px;
+            color: #666;
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+
+        .event-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+        }
+
+        .event-time {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .event-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .vibe-tag {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .vibe-family {
+            background: rgba(52, 199, 89, 0.2);
+            color: #34C759;
+        }
+
+        .vibe-casual {
+            background: rgba(0, 122, 255, 0.2);
+            color: #007AFF;
+        }
+
+        .vibe-ultras {
+            background: rgba(255, 59, 48, 0.2);
+            color: #FF3B30;
+        }
+
+        .capacity {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 414px;
+            background: white;
+            border-top: 1px solid #e1e1e1;
+            display: flex;
+            padding: 12px 0 32px 0;
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-item.active {
+            color: #007AFF;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: #007AFF;
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        .chat-container {
+            padding-bottom: 100px;
+        }
+
+        .chat-message {
+            margin: 12px 0;
+            max-width: 80%;
+        }
+
+        .chat-message.own {
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .message-bubble {
+            display: inline-block;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .chat-message.own .message-bubble {
+            background: #007AFF;
+            color: white;
+        }
+
+        .chat-message:not(.own) .message-bubble {
+            background: #e9e9eb;
+            color: #333;
+        }
+
+        .message-sender {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .chat-input {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 414px;
+            background: white;
+            padding: 12px 20px 32px 20px;
+            border-top: 1px solid #e1e1e1;
+            display: flex;
+            gap: 12px;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e1e1e1;
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .send-btn {
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .event-detail {
+            padding-bottom: 100px;
+        }
+
+        .detail-section {
+            margin: 24px 0;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        .detail-label {
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            text-align: right;
+        }
+
+        .join-btn {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 374px;
+            height: 56px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 414px) {
+            .container {
+                max-width: 100%;
+            }
+            
+            .bottom-nav, .chat-input, .join-btn {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Onboarding Screen -->
+        <div id="onboarding" class="screen active">
+            <div style="padding: 60px 0 40px 0;">
+                <div class="header">
+                    <div class="logo">⚽</div>
+                    <h1 class="title">FanQuest 2026</h1>
+                    <p class="subtitle">Connect with fellow fans<br>across the World Cup</p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 80px;">
+                <button class="btn" onclick="showTeamSelection()">
+                    🍎 Continue with Apple
+                </button>
+                
+                <p style="text-align: center; font-size: 12px; color: #666; margin-top: 20px; line-height: 1.4;">
+                    Connect with verified fans and discover<br>amazing meetups in every host city
+                </p>
+            </div>
+        </div>
+
+        <!-- Team Selection Screen -->
+        <div id="teamSelection" class="screen">
+            <button class="back-btn" onclick="showOnboarding()">← Back</button>
+            
+            <div style="padding-top: 60px;">
+                <div style="text-align: center; margin-bottom: 32px;">
+                    <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 8px;">Choose Your Team</h2>
+                    <p style="color: #666;">Select the team you'll be supporting</p>
+                </div>
+
+                <div class="team-grid" id="teamGrid">
+                    <!-- Teams will be populated by JavaScript -->
+                </div>
+
+                <button class="btn hidden" id="continueBtn" onclick="completeOnboarding()" style="margin-top: 32px;">
+                    Continue
+                </button>
+            </div>
+        </div>
+
+        <!-- Main App -->
+        <div id="mainApp" class="screen">
+            <!-- Fixtures Tab -->
+            <div id="fixturesTab" class="tab-content">
+                <h1 style="font-size: 28px; font-weight: bold; margin-bottom: 24px; text-align: center;">Fixtures</h1>
+                <div id="fixturesList">
+                    <!-- Fixtures will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Fixture Detail -->
+            <div id="fixtureDetail" class="tab-content hidden">
+                <button class="back-btn" onclick="showFixtures()">← Fixtures</button>
+                <div style="padding-top: 60px;">
+                    <div id="fixtureDetailContent">
+                        <!-- Detail content will be populated -->
+                    </div>
+                    
+                    <div class="event-tabs">
+                        <div class="event-tab active" data-type="watchparty" onclick="filterEvents('watchparty')">📺 Watch Party</div>
+                        <div class="event-tab" data-type="tailgate" onclick="filterEvents('tailgate')">🚗 Tailgate</div>
+                        <div class="event-tab" data-type="afterparty" onclick="filterEvents('afterparty')">🎉 After Party</div>
+                        <div class="event-tab" data-type="transport" onclick="filterEvents('transport')">🚌 Transport</div>
+                    </div>
+
+                    <div id="eventsList">
+                        <!-- Events will be populated -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Detail -->
+            <div id="eventDetail" class="tab-content hidden">
+                <button class="back-btn" onclick="showFixtureDetail()">← Back</button>
+                <div class="event-detail">
+                    <div id="eventDetailContent">
+                        <!-- Event detail content will be populated -->
+                    </div>
+                </div>
+                <button class="btn join-btn" id="joinEventBtn" onclick="joinEvent()">
+                    Join Event
+                </button>
+            </div>
+
+            <!-- Group Chat -->
+            <div id="groupChat" class="tab-content hidden">
+                <button class="back-btn" onclick="showEventDetail()">← Event</button>
+                <div style="padding-top: 60px;">
+                    <h2 style="text-align: center; margin-bottom: 24px;" id="chatTitle">Group Chat</h2>
+                    <div class="chat-container" id="chatMessages">
+                        <!-- Messages will be populated -->
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" class="message-input" placeholder="Type a message..." id="messageInput">
+                    <button class="send-btn" onclick="sendMessage()">→</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav" id="bottomNav" style="display: none;">
+            <div class="nav-item active" onclick="showFixtures()">
+                <span class="nav-icon">📅</span>
+                <span class="nav-label">Fixtures</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">🗺️</span>
+                <span class="nav-label">Explore</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">💬</span>
+                <span class="nav-label">Messages</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span class="nav-label">Profile</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        const teams = [
+            { id: 'usa', name: 'United States', country: 'USA', flag: '🇺🇸', color: '#FF0000' },
+            { id: 'mex', name: 'Mexico', country: 'Mexico', flag: '🇲🇽', color: '#00A651' },
+            { id: 'can', name: 'Canada', country: 'Canada', flag: '🇨🇦', color: '#FF0000' },
+            { id: 'bra', name: 'Brazil', country: 'Brazil', flag: '🇧🇷', color: '#FFDF00' },
+            { id: 'arg', name: 'Argentina', country: 'Argentina', flag: '🇦🇷', color: '#87CEEB' },
+            { id: 'eng', name: 'England', country: 'England', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', color: '#CE1124' },
+            { id: 'fra', name: 'France', country: 'France', flag: '🇫🇷', color: '#0055A4' },
+            { id: 'ger', name: 'Germany', country: 'Germany', flag: '🇩🇪', color: '#000000' }
+        ];
+
+        const fixtures = [
+            {
+                id: '1',
+                homeTeam: teams[0], // USA
+                awayTeam: teams[1], // Mexico
+                date: new Date('2026-06-15T15:00:00'),
+                stadium: 'SoFi Stadium',
+                city: 'Los Angeles',
+                country: 'USA',
+                stage: 'Group Stage',
+                attending: 234
+            },
+            {
+                id: '2',
+                homeTeam: teams[3], // Brazil
+                awayTeam: teams[4], // Argentina
+                date: new Date('2026-06-20T18:00:00'),
+                stadium: 'MetLife Stadium',
+                city: 'New York',
+                country: 'USA',
+                stage: 'Group Stage',
+                attending: 567
+            },
+            {
+                id: '3',
+                homeTeam: teams[5], // England
+                awayTeam: teams[6], // France
+                date: new Date('2026-06-25T16:00:00'),
+                stadium: 'BMO Field',
+                city: 'Toronto',
+                country: 'Canada',
+                stage: 'Round of 16',
+                attending: 89
+            }
+        ];
+
+        const events = [
+            {
+                id: '1',
+                fixtureId: '1',
+                type: 'watchparty',
+                title: 'Downtown Watch Party',
+                description: 'Join fellow fans at the best sports bar in downtown LA!',
+                host: 'Maria Rodriguez',
+                venue: '123 Sports Bar, Downtown LA',
+                time: new Date('2026-06-15T14:00:00'),
+                capacity: 150,
+                attending: 23,
+                vibe: 'casual',
+                price: 0,
+                verified: true
+            },
+            {
+                id: '2',
+                fixtureId: '1',
+                type: 'tailgate',
+                title: 'Pre-Game Tailgate',
+                description: 'BBQ, music, and team chants before the big game!',
+                host: 'John Smith',
+                venue: 'SoFi Stadium Parking Lot C',
+                time: new Date('2026-06-15T12:00:00'),
+                capacity: 200,
+                attending: 45,
+                vibe: 'family',
+                price: 25,
+                verified: false
+            },
+            {
+                id: '3',
+                fixtureId: '1',
+                type: 'transport',
+                title: 'Fan Bus from Hollywood',
+                description: 'Comfortable bus ride with fellow supporters',
+                host: 'LA Fan Transport',
+                venue: 'Hollywood & Highland',
+                time: new Date('2026-06-15T11:00:00'),
+                capacity: 50,
+                attending: 12,
+                vibe: 'casual',
+                price: 35,
+                verified: true
+            },
+            {
+                id: '4',
+                fixtureId: '1',
+                type: 'afterparty',
+                title: 'Victory Celebration',
+                description: 'Celebrate the win with drinks and music!',
+                host: 'Party Crew LA',
+                venue: 'Rooftop Bar Downtown',
+                time: new Date('2026-06-15T21:00:00'),
+                capacity: 100,
+                attending: 8,
+                vibe: 'ultras',
+                price: 40,
+                verified: true
+            }
+        ];
+
+        const sampleMessages = [
+            { sender: 'John', content: "Hey everyone! Can't wait for this event!", time: new Date('2026-06-14T10:30:00'), own: false },
+            { sender: 'Maria', content: 'Same here! Should we meet up before?', time: new Date('2026-06-14T10:45:00'), own: false },
+            { sender: 'You', content: "I'm bringing some snacks to share 🍿", time: new Date('2026-06-14T11:00:00'), own: true },
+            { sender: 'Sarah', content: "Perfect! I'll bring drinks", time: new Date('2026-06-14T11:15:00'), own: false }
+        ];
+
+        // App state
+        let selectedTeam = null;
+        let selectedFixture = null;
+        let selectedEvent = null;
+        let currentEventType = 'watchparty';
+        let attendingFixtures = new Set();
+        let joinedEvents = new Set();
+
+        // Initialize app
+        function init() {
+            populateTeams();
+            populateFixtures();
+        }
+
+        // Screen navigation
+        function showOnboarding() {
+            showScreen('onboarding');
+            document.getElementById('bottomNav').style.display = 'none';
+        }
+
+        function showTeamSelection() {
+            showScreen('teamSelection');
+        }
+
+        function completeOnboarding() {
+            showScreen('mainApp');
+            showFixtures();
+            document.getElementById('bottomNav').style.display = 'flex';
+        }
+
+        function showFixtures() {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.getElementById('fixturesTab').classList.remove('hidden');
+            updateNavigation('fixtures');
+        }
+
+        function showFixtureDetail() {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.getElementById('fixtureDetail').classList.remove('hidden');
+        }
+
+        function showEventDetail() {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.getElementById('eventDetail').classList.remove('hidden');
+        }
+
+        function showGroupChat() {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.getElementById('groupChat').classList.remove('hidden');
+            populateChat();
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function updateNavigation(activeTab) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            // Add active class based on activeTab if needed
+        }
+
+        // Team selection
+        function populateTeams() {
+            const grid = document.getElementById('teamGrid');
+            grid.innerHTML = teams.map(team => `
+                <div class="team-card" onclick="selectTeam('${team.id}')">
+                    <span class="team-flag">${team.flag}</span>
+                    <div class="team-name">${team.name}</div>
+                    <div class="team-country">${team.country}</div>
+                </div>
+            `).join('');
+        }
+
+        function selectTeam(teamId) {
+            selectedTeam = teams.find(t => t.id === teamId);
+            
+            // Update UI
+            document.querySelectorAll('.team-card').forEach(card => card.classList.remove('selected'));
+            event.target.closest('.team-card').classList.add('selected');
+            
+            // Show continue button
+            const continueBtn = document.getElementById('continueBtn');
+            continueBtn.classList.remove('hidden');
+            continueBtn.style.background = selectedTeam.color;
+        }
+
+        // Fixtures
+        function populateFixtures() {
+            const container = document.getElementById('fixturesList');
+            container.innerHTML = fixtures.map(fixture => `
+                <div class="fixture-card" onclick="selectFixture('${fixture.id}')">
+                    <div class="match-teams">
+                        <div class="team-info">
+                            <span class="flag">${fixture.homeTeam.flag}</span>
+                            <div class="name">${fixture.homeTeam.name}</div>
+                        </div>
+                        <div class="vs-section">
+                            <div class="vs-text">VS</div>
+                            <div class="match-time">${formatDate(fixture.date)}</div>
+                        </div>
+                        <div class="team-info">
+                            <span class="flag">${fixture.awayTeam.flag}</span>
+                            <div class="name">${fixture.awayTeam.name}</div>
+                        </div>
+                    </div>
+                    <div class="venue-info">
+                        <div class="stadium">${fixture.stadium}</div>
+                        <div class="city">${fixture.city}, ${fixture.country}</div>
+                    </div>
+                    <div class="attendance-row">
+                        <div class="attendance-info">
+                            <span>👥</span>
+                            <span>${fixture.attending} fans going</span>
+                        </div>
+                        <button class="going-btn ${attendingFixtures.has(fixture.id) ? 'active' : ''}" onclick="event.stopPropagation(); toggleAttending('${fixture.id}')">
+                            ${attendingFixtures.has(fixture.id) ? '✓ Going' : "+ I'm Going"}
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectFixture(fixtureId) {
+            selectedFixture = fixtures.find(f => f.id === fixtureId);
+            populateFixtureDetail();
+            showFixtureDetail();
+        }
+
+        function toggleAttending(fixtureId) {
+            if (attendingFixtures.has(fixtureId)) {
+                attendingFixtures.delete(fixtureId);
+            } else {
+                attendingFixtures.add(fixtureId);
+            }
+            populateFixtures(); // Refresh the list
+        }
+
+        function populateFixtureDetail() {
+            if (!selectedFixture) return;
+            
+            const content = document.getElementById('fixtureDetailContent');
+            content.innerHTML = `
+                <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 16px; margin-bottom: 24px;">
+                    <div class="match-teams" style="margin-bottom: 16px;">
+                        <div class="team-info">
+                            <span class="flag" style="font-size: 48px;">${selectedFixture.homeTeam.flag}</span>
+                            <div style="font-size: 18px; font-weight: 600; margin-top: 8px;">${selectedFixture.homeTeam.name}</div>
+                        </div>
+                        <div class="vs-section">
+                            <div style="font-size: 20px; font-weight: bold; color: #666;">VS</div>
+                            <div style="font-size: 14px; color: #666; margin-top: 8px;">${formatDateTime(selectedFixture.date)}</div>
+                            <div style="font-size: 12px; background: #e1e1e1; padding: 4px 8px; border-radius: 8px; margin-top: 4px;">${selectedFixture.stage}</div>
+                        </div>
+                        <div class="team-info">
+                            <span class="flag" style="font-size: 48px;">${selectedFixture.awayTeam.flag}</span>
+                            <div style="font-size: 18px; font-weight: 600; margin-top: 8px;">${selectedFixture.awayTeam.name}</div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">${selectedFixture.stadium}</div>
+                        <div style="color: #666;">📍 ${selectedFixture.city}, ${selectedFixture.country}</div>
+                    </div>
+                    <div style="color: #666; margin-bottom: 16px;">👥 ${selectedFixture.attending} fans attending</div>
+                    <button class="btn ${attendingFixtures.has(selectedFixture.id) ? '' : ''}" onclick="toggleAttending('${selectedFixture.id}')" style="background: ${attendingFixtures.has(selectedFixture.id) ? '#34C759' : '#007AFF'};">
+                        ${attendingFixtures.has(selectedFixture.id) ? "✓ You're Going!" : "+ I'm Going"}
+                    </button>
+                </div>
+            `;
+            
+            filterEvents(currentEventType);
+        }
+
+        // Events
+        function filterEvents(type) {
+            currentEventType = type;
+            
+            // Update tabs
+            document.querySelectorAll('.event-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelector(`[data-type="${type}"]`).classList.add('active');
+            
+            // Filter and display events
+            const fixtureEvents = events.filter(e => e.fixtureId === selectedFixture.id && e.type === type);
+            populateEvents(fixtureEvents);
+        }
+
+        function populateEvents(eventList) {
+            const container = document.getElementById('eventsList');
+            if (eventList.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;">No events found for this category</div>';
+                return;
+            }
+            
+            container.innerHTML = eventList.map(event => `
+                <div class="event-card" onclick="selectEvent('${event.id}')">
+                    <div class="event-header">
+                        <div>
+                            <div class="event-title">${event.title}</div>
+                            <div class="event-host">${event.host}</div>
+                        </div>
+                        <div class="event-price">
+                            ${event.verified ? '<span class="verified">✓</span><br>' : ''}
+                            <span class="price ${event.price === 0 ? 'free' : ''}">${event.price === 0 ? 'FREE' : '$' + event.price}</span>
+                        </div>
+                    </div>
+                    <div class="event-description">${event.description}</div>
+                    <div class="event-footer">
+                        <div class="event-time">
+                            <span>🕒</span>
+                            <span>${formatTime(event.time)}</span>
+                        </div>
+                        <div class="event-meta">
+                            <span class="vibe-tag vibe-${event.vibe}">${getVibeLabel(event.vibe)}</span>
+                            <span class="capacity">${event.attending}/${event.capacity}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectEvent(eventId) {
+            selectedEvent = events.find(e => e.id === eventId);
+            populateEventDetail();
+            showEventDetail();
+        }
+
+        function populateEventDetail() {
+            if (!selectedEvent) return;
+            
+            const content = document.getElementById('eventDetailContent');
+            content.innerHTML = `
+                <div style="padding-top: 40px;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                        <h1 style="font-size: 24px; font-weight: bold; flex: 1;">${selectedEvent.title}</h1>
+                        ${selectedEvent.verified ? '<span style="color: #007AFF; font-size: 24px;">✓</span>' : ''}
+                    </div>
+                    
+                    <p style="color: #666; margin-bottom: 24px; line-height: 1.5;">${selectedEvent.description}</p>
+                    
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 32px; padding: 16px; background: #f8f9fa; border-radius: 12px;">
+                        <div style="width: 40px; height: 40px; background: #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">H</div>
+                        <div>
+                            <div style="font-size: 12px; color: #666;">Hosted by</div>
+                            <div style="font-weight: 600;">${selectedEvent.host}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <div class="detail-row">
+                            <div class="detail-label">🕒 Time</div>
+                            <div class="detail-value">${formatDateTime(selectedEvent.time)}</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">📍 Venue</div>
+                            <div class="detail-value">${selectedEvent.venue}</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">👥 Capacity</div>
+                            <div class="detail-value">${selectedEvent.attending} / ${selectedEvent.capacity} attending</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">🏷️ Vibe</div>
+                            <div class="detail-value">${getVibeLabel(selectedEvent.vibe)}</div>
+                        </div>
+                        ${selectedEvent.price > 0 ? `
+                        <div class="detail-row">
+                            <div class="detail-label">💰 Price</div>
+                            <div class="detail-value">$${selectedEvent.price}</div>
+                        </div>` : ''}
+                    </div>
+                    
+                    ${selectedEvent.attending > 0 ? `
+                    <div class="detail-section">
+                        <h3 class="section-title">Who's Going</h3>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            ${Array.from({length: Math.min(5, selectedEvent.attending)}, (_, i) => 
+                                `<div style="width: 32px; height: 32px; background: #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">${i+1}</div>`
+                            ).join('')}
+                            ${selectedEvent.attending > 5 ? `<span style="color: #666; font-size: 12px;">+${selectedEvent.attending - 5} more</span>` : ''}
+                        </div>
+                    </div>` : ''}
+                </div>
+            `;
+            
+            // Update join button
+            const joinBtn = document.getElementById('joinEventBtn');
+            const isJoined = joinedEvents.has(selectedEvent.id);
+            joinBtn.textContent = isJoined ? "You're In!" : "Join Event";
+            joinBtn.style.background = isJoined ? '#34C759' : '#007AFF';
+        }
+
+        function joinEvent() {
+            if (!selectedEvent) return;
+            
+            const isJoined = joinedEvents.has(selectedEvent.id);
+            if (isJoined) {
+                showGroupChat();
+            } else {
+                joinedEvents.add(selectedEvent.id);
+                selectedEvent.attending++; // Simulate joining
+                
+                // Update button
+                const joinBtn = document.getElementById('joinEventBtn');
+                joinBtn.textContent = "You're In!";
+                joinBtn.style.background = '#34C759';
+                
+                // Show success and offer chat
+                setTimeout(() => {
+                    if (confirm("You've joined the event! Would you like to join the group chat?")) {
+                        showGroupChat();
+                    }
+                }, 500);
+            }
+        }
+
+        // Chat
+        function populateChat() {
+            const container = document.getElementById('chatMessages');
+            const chatTitle = document.getElementById('chatTitle');
+            
+            if (selectedEvent) {
+                chatTitle.textContent = selectedEvent.title;
+            }
+            
+            container.innerHTML = sampleMessages.map(msg => `
+                <div class="chat-message ${msg.own ? 'own' : ''}">
+                    ${!msg.own ? `<div class="message-sender">${msg.sender}</div>` : ''}
+                    <div class="message-bubble">${msg.content}</div>
+                </div>
+            `).join('');
+            
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                // Add message to chat
+                const container = document.getElementById('chatMessages');
+                const messageHtml = `
+                    <div class="chat-message own">
+                        <div class="message-bubble">${message}</div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', messageHtml);
+                
+                // Clear input and scroll
+                input.value = '';
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+
+        // Utility functions
+        function formatDate(date) {
+            return date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit'
+            });
+        }
+
+        function formatDateTime(date) {
+            return date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+        }
+
+        function formatTime(date) {
+            return date.toLocaleTimeString('en-US', { 
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+        }
+
+        function getVibeLabel(vibe) {
+            switch(vibe) {
+                case 'family': return 'Family Friendly';
+                case 'casual': return 'Casual';
+                case 'ultras': return 'Ultras';
+                default: return vibe;
+            }
+        }
+
+        // Handle Enter key in chat
+        document.addEventListener('DOMContentLoaded', function() {
+            const messageInput = document.getElementById('messageInput');
+            if (messageInput) {
+                messageInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+            }
+        });
+
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>
